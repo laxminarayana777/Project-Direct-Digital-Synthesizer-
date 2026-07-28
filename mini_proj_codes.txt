@@ -1,0 +1,216 @@
+
+SAWTOOTH WAVE(PROJECT 2)
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 28.04.2025 12:29:09
+// Design Name: 
+// Module Name: simpleDDs
+// Project Name: SAWTOOTH WAVE
+// Target Devices: Nexys Artix A7 100T
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module simpleDDs(
+       input DAC_clk,
+       output reg[9:0]DAC_data
+       
+    );
+ //integer count=0;
+ //   reg new_clk=0;
+/*    always@(posedge DAC_clk)
+    begin
+    count = count +1;
+    if (count >5000)
+    begin 
+    count = 0;
+     new_clk=~new_clk;
+    end
+    end*/
+    reg [15:0] cnt=16'h000;
+    integer extra=0;
+    always@(posedge DAC_clk)
+    begin cnt<=cnt+1;
+    if(cnt==0)
+    begin
+    extra=extra+1;
+    end
+    if(extra==10)
+    begin 
+    cnt<=cnt+1;
+    end
+    DAC_data <= cnt;
+    end
+    
+endmodule
+
+SQUARE WAVE(PROJECT 3)
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 28.04.2025 12:29:09
+// Design Name: 
+// Module Name: simpleDDs
+// Project Name: SQUARE WAVE
+// Target Devices: Nexys Artix A7 100T FPGA board
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+ module DDS_square(
+       input DAC_clk,
+       output reg[9:0]DAC_data
+       
+    );
+ integer count=0;
+    reg new_clk=0;
+    always@(posedge DAC_clk)
+    begin
+    count = count +1;
+    if (count >500000)
+    begin 
+    count = 0;
+     new_clk=~new_clk;
+    end
+    end
+    reg [15:0] cnt=16'h000;
+    always@(posedge new_clk)
+    begin cnt<=cnt+1;
+    DAC_data <={10{cnt[7]}};
+    end
+    
+endmodule
+
+TRIANGULAR WAVE(PROJECT 4)
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 28.04.2025 12:29:09
+// Design Name: 
+// Module Name: simpleDDs
+// Project Name: TRIANGULAR WAVE
+// Target Devices: Nexys Artix A7 100T FPGA board
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module DDS_square(
+       input    DAC_clk,
+       output [9:0]DAC_data
+       
+    );
+ /*integer count=0;
+    reg new_clk=0;
+    always@(posedge DAC_clk)
+    begin
+    count = count +1;
+    if (count >50000000)
+    begin 
+    count = 0;
+     new_clk=~new_clk;
+    end
+    end*/
+    reg [9:0] cnt = 0;
+    reg dir =1;
+    always@(posedge DAC_clk)
+    begin
+        if(cnt == 1023)
+            dir = 0;
+        else if(cnt == 0)
+            dir = 1;
+        if(dir)
+        begin
+        cnt<=cnt + 'd1;
+        end
+        else
+        begin
+        cnt<=cnt - 'd1;
+        end
+    end
+    assign DAC_data = cnt;
+endmodule
+  
+SINUSOIDAL WAVE(PROJECT 5)
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 01.05.2025 00:40:24
+// Design Name: 
+// Module Name: DDS_sine
+// Project Name: SINUSOIDAL WAVE
+// Target Devices: Nexys Artix A7 100T FPGA board
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module DDS_sine(
+input DAC_clk, output reg[9:0]DAC_data
+
+    );
+    reg[15:0]cnt=16'h0000;
+    reg [9:0] sine_table[0:15];
+    initial begin
+    sine_table[0]=10'd512;
+    sine_table[1]=10'd707;
+    sine_table[2]=10'd873;
+    sine_table[3]=10'd981;
+    sine_table[4]=10'd1023;
+    sine_table[5]=10'd981;
+    sine_table[6]=10'd873;
+    sine_table[7]=10'd707;
+    sine_table[8]=10'd512;
+    sine_table[9]=10'd316;
+    sine_table[10]=10'd150;
+    sine_table[11]=10'd42;
+    sine_table[12]=10'd0;
+    sine_table[13]=10'd42;
+    sine_table[14]=10'd150;
+    sine_table[15]=10'd316;
+    end
+    always@(posedge DAC_clk) begin
+    cnt<=cnt+1;
+    DAC_data<=sine_table[cnt[3:0]];
+    end
+endmodule
+
